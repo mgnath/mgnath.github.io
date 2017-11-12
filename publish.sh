@@ -1,5 +1,5 @@
 #!/bin/bash
-cp -R  ~/Projects/eldinero/dist/ ~/Projects/publish/mgnath.github.io/
+rsync --progress -a ~/Projects/eldinero/dist/ ~/Projects/publish/mgnath.github.io/
 git add .
-git commit -a -m "My test message"
+git commit -a -m "$1"
 git push

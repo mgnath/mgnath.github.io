@@ -3,9 +3,7 @@ rsync --progress -a -q ~/Projects/eldinero/dist/ ~/Projects/publish/mgnath.githu
 cd 'archive/'$1'/'
 sed -i '' "s/z.z.z/$1/g" index.html
 cd ../../
-rm -f *.js
-rm -f *.html
-rm -f *.css
+rm -f *.js *.html *.css
 rsync --progress -a -q ~/Projects/eldinero/dist/ ~/Projects/publish/mgnath.github.io
 sed -i '' "s/z.z.z/$1/g" index.html
 git add .

@@ -969,7 +969,7 @@ module.exports = ".flex-container {\n  display: flex;\n  flex-wrap:wrap;\n}"
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<mat-radio-group  [(ngModel)]=\"transType\">\n  <mat-radio-button value=\"0\">Buy</mat-radio-button>\n  <mat-radio-button value=\"1\">Sell</mat-radio-button>\n</mat-radio-group>&nbsp;\n<mat-form-field class=\"example-full-width\">\n  <input matInput [(ngModel)]=\"newT.symbol\" placeholder=\"{{stockName || 'Symbol'}}\" value=\"\" (blur)=\"validateSymbol()\">\n</mat-form-field>\n<mat-form-field class=\"example-full-width\">\n  <input matInput [(ngModel)]=\"newT.shares\" type=\"number\" placeholder=\"Shares\" value=\"\">\n</mat-form-field>\n<mat-form-field class=\"example-full-width\">\n  <input matInput [(ngModel)]=\"newT.price\" type=\"number\" placeholder=\"Purchase Price\" value=\"\" (keyup.enter)=\"addTransaction(newT)\">\n</mat-form-field>\n<ng-container *ngIf=\"transType === '1' \">\n  <mat-form-field class=\"example-full-width\">\n    <input matInput [(ngModel)]=\"newT.sellprice\" type=\"number\" placeholder=\"Sell Price\" value=\"\" (keyup.enter)=\"addTransaction(newT)\">\n  </mat-form-field>\n</ng-container>\n<mat-form-field class=\"example-full-width\">\n        <input matInput [matDatepicker]=\"picker\" placeholder=\"Choose a date\" \n        [(ngModel)]=\"newT.date\">\n        <mat-datepicker-toggle matSuffix [for]=\"picker\"></mat-datepicker-toggle>\n        <mat-datepicker #picker [(ngModel)]=\"newT.date\" ngDefaultControl (selectedChanged)=\"onDate($event)\"></mat-datepicker>\n </mat-form-field>\n<!--  <mat-form-field>\n   <input matInput [(ngModel)]=\"newT.date\" (focus)=\"setCurrentTime()\" \n   placeholder=\"MM/DD/YYYY hh:mm:ss\" value=\"\">\n </mat-form-field> -->\n \n<button mat-raised-button (click)=\"addTransaction(newT)\" color=\"primary\" [disabled]=\"(stockName.length<1) || !(newT.shares > 0 ) \">\n  Trade\n</button>"
+module.exports = "<mat-radio-group  [(ngModel)]=\"transType\">\n  <mat-radio-button value=\"0\">Buy</mat-radio-button>\n  <mat-radio-button value=\"1\">Sell</mat-radio-button>\n</mat-radio-group>&nbsp;\n<mat-form-field class=\"example-full-width\">\n  <input matInput [(ngModel)]=\"newT.symbol\" placeholder=\"{{stockName || 'Symbol'}}\" value=\"\" (blur)=\"validateSymbol()\">\n</mat-form-field>\n<mat-form-field class=\"example-full-width\">\n  <input matInput [(ngModel)]=\"newT.shares\" type=\"number\" placeholder=\"Shares\" value=\"\">\n</mat-form-field>\n<mat-form-field class=\"example-full-width\">\n  <input matInput [(ngModel)]=\"newT.price\" type=\"number\" placeholder=\"Purchase Price\" value=\"\" (keyup.enter)=\"addTransaction(newT)\">\n</mat-form-field>\n<ng-container *ngIf=\"transType === '1' \">\n  <mat-form-field class=\"example-full-width\">\n    <input matInput [(ngModel)]=\"newT.sellprice\" type=\"number\" placeholder=\"Sell Price\" value=\"\" (keyup.enter)=\"addTransaction(newT)\">\n  </mat-form-field>\n</ng-container>\n<mat-form-field class=\"example-full-width\">\n        <input matInput [matDatepicker]=\"picker\" placeholder=\"Choose a date\" \n        [(ngModel)]=\"newT.date\" (focus)=\"picker.open()\">\n        <mat-datepicker-toggle matSuffix [for]=\"picker\"></mat-datepicker-toggle>\n        <mat-datepicker #picker [(ngModel)]=\"newT.date\" ngDefaultControl (selectedChanged)=\"onDate($event)\"></mat-datepicker>\n </mat-form-field>\n<!--  <mat-form-field>\n   <input matInput [(ngModel)]=\"newT.date\" (focus)=\"setCurrentTime()\" \n   placeholder=\"MM/DD/YYYY hh:mm:ss\" value=\"\">\n </mat-form-field> -->\n \n<button mat-raised-button (click)=\"addTransaction(newT)\" color=\"primary\" [disabled]=\"(stockName.length<1) || !(newT.shares > 0 ) \">\n  Trade\n</button>"
 
 /***/ }),
 
@@ -1007,12 +1007,6 @@ var NewTickerComponent = /** @class */ (function () {
         this.newT = new _shared_models_entities__WEBPACK_IMPORTED_MODULE_1__["Transaction"]('', null, _shared_models_entities__WEBPACK_IMPORTED_MODULE_1__["TransactionType"].BUY, null, false, null);
     }
     NewTickerComponent.prototype.ngOnInit = function () {
-    };
-    NewTickerComponent.prototype.setCurrentTime = function () {
-        var tmp = (new Date().getMonth() + 1) + '/'
-            + new Date().getDate() + '/' + new Date().getFullYear() + ' '
-            + new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds();
-        this.newT.date = new Date(tmp);
     };
     NewTickerComponent.prototype.onDate = function (event) {
         this.newT.date = event;
@@ -2825,18 +2819,20 @@ var StocksApiService = /** @class */ (function () {
                 this.dataStore.stocks.map(function (q) { return q.sym; }).join(','))
                 .subscribe(function (data) {
                 _this.loadingLatest = false;
-                _this.dataStore.latestPrices = [];
+                //this.dataStore.latestPrices = [];
                 data.results.forEach(function (q) {
-                    var res = _this.dataStore.latestPrices.find(function (lp) { return lp.sym === q.symbol; });
-                    // console.log(this.dataStore.latestPrices);
-                    if (res) {
-                        res = StockPrice.convert(q);
+                    if (q != null) {
+                        var res = _this.dataStore.latestPrices.find(function (lp) { return lp.sym === q.symbol; });
+                        // console.log(this.dataStore.latestPrices);
+                        if (res) {
+                            res = StockPrice.convert(q);
+                        }
+                        else {
+                            _this.dataStore.latestPrices.push(StockPrice.convert(q));
+                        }
+                        _this.addToHistory(StockPrice.convert(q));
+                        _this.updateStockInfo(q);
                     }
-                    else {
-                        _this.dataStore.latestPrices.push(StockPrice.convert(q));
-                    }
-                    _this.addToHistory(StockPrice.convert(q));
-                    _this.updateStockInfo(q);
                 });
                 // console.log(this.dataStore.latestPrices);
                 _this.publishLatestPrices();

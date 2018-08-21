@@ -2819,7 +2819,7 @@ var StocksApiService = /** @class */ (function () {
                 this.dataStore.stocks.map(function (q) { return q.sym; }).join(','))
                 .subscribe(function (data) {
                 _this.loadingLatest = false;
-                //this.dataStore.latestPrices = [];
+                _this.dataStore.latestPrices = [];
                 data.results.forEach(function (q) {
                     if (q != null) {
                         var res = _this.dataStore.latestPrices.find(function (lp) { return lp.sym === q.symbol; });
